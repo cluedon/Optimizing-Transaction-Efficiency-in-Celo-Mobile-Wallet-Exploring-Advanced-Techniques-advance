@@ -1,0 +1,41 @@
+import { ContractKit, StableToken } from '@celo/contractkit';
+
+const celoNetworkURL = 'https://<celo-network-url>';
+
+async function optimizeTransactions() {
+  try {
+    const kit = ContractKit.newKit(celoNetworkURL);
+    await kit.connection.connect();
+
+    // Get the user's wallet address
+    const accounts = await kit.web3.eth.getAccounts();
+    const userAddress = accounts[0];
+
+    // Get the Celo stable token contract
+    const stableToken = await kit.contracts.getStableToken();
+
+    // Approve the stable token transfer
+    const approvalTx = await stableToken.approve(
+      '0xRecipientAddress',
+      '1000000000000000000' // Approve 1 CELO for transfer
+    );
+
+    // Wait for the approval transaction to be mined
+    await approvalTx.waitReceipt();
+
+    // Transfer the stable token to the recipient
+    const transferTx = await stableToken.transfer(
+      '0xRecipientAddress',
+      '1000000000000000000' // Transfer 1 CELO
+    );
+
+    // Wait for the transfer transaction to be mined
+    await transferTx.waitReceipt();
+
+    console.log('Optimized transactions completed successfully!');
+  } catch (error) {
+    console.error('Error optimizing transactions:', error);
+  }
+}
+
+optimizeTransactions();
