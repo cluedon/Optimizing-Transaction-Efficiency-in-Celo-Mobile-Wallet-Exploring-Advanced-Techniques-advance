@@ -1,0 +1,72 @@
+import React, { useState } from 'react';
+
+const TransactionForm = ({ onSubmit }) => {
+  const [recipient, setRecipient] = useState('');
+  const [amount, setAmount] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ recipient, amount });
+    setRecipient('');
+    setAmount('');
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="recipient">Recipient:</label>
+        <input
+          type="text"
+          id="recipient"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="amount">Amount:</label>
+        <input
+          type="text"
+          id="amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+      </div>
+      <button type="submit">Send Transaction</button>
+    </form>
+  );
+};
+
+const TransactionList = ({ transactions }) => {
+  return (
+    <div>
+      <h2>Transaction History</h2>
+      <ul>
+        {transactions.map((transaction, index) => (
+          <li key={index}>
+            Recipient: {transaction.recipient}, Amount: {transaction.amount}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+const App = () => {
+  const [transactions, setTransactions] = useState([]);
+
+  const handleTransactionSubmit = (transaction) => {
+    setTransactions([...transactions, transaction]);
+    // Perform transaction optimization and submit to Celo blockchain
+    // ...
+  };
+
+  return (
+    <div>
+      <h1>Celo Mobile Wallet</h1>
+      <TransactionForm onSubmit={handleTransactionSubmit} />
+      <TransactionList transactions={transactions} />
+    </div>
+  );
+};
+
+export default App;
